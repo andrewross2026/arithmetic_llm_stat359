@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Arithmetic LLM Training System
 
 A two-phase machine learning pipeline that trains a transformer-based language model to solve arithmetic problems with step-by-step reasoning.
@@ -42,6 +43,76 @@ The data loader processes JSONL data differently based on training mode:
 1. **Foundational Mode**: Concatenates `problem + solution` to train the base model on complete sequences
    - Input: `"Evaluate: 5 + (10 - 3) <think> Step 1: 10 - 3 = 7 ... Final Result: 12"`
    - Model learns when to generate `<think>` and complete reasoning
+=======
+
+# Arithmetic LLM Adversarial Robustness & LoRA Extension (STAT 359 Final Project)
+
+## Project Motivation
+Arithmetic language models (LLMs) are increasingly used for tasks requiring numeric reasoning. This project investigates their robustness to adversarial input perturbations and explores how adaptation strategies (including LoRA) affect performance.
+
+## Research Question
+How robust are arithmetic LLMs to adversarial numeric, linguistic, and tone-based perturbations? Can adaptation methods like LoRA improve both clean accuracy and adversarial resilience?
+
+## Project Overview
+This repo contains the full final project for STAT 359, including:
+- **Base Adversarial Robustness Study:** Evaluates LLMs under numeric perturbations, language pressure, politeness/tone changes, and breakpoint/pressure-axis analysis.
+- **LoRA Extension:** Compares the impact of LoRA rank (4, 8, 16) on clean accuracy and adversarial robustness.
+
+## Experimental Axes
+
+- **Numeric Perturbation:** Tests model stability when input numbers are changed.
+- **Language Pressure Ladder:** Assesses robustness to increasingly complex or pressured language.
+- **Politeness/Tone Ladder:** Evaluates model responses to shifts in politeness and tone.
+- **Breakpoint/Pressure-Axis Analysis:** Identifies points where model performance breaks under adversarial pressure.
+
+## LoRA Extension
+The LoRA experiments are an extension to the base study, focusing on how low-rank adaptation affects both clean and adversarial performance. Models with LoRA ranks 4, 8, and 16 were trained and evaluated.
+
+## Key Results
+
+- **Base Study:** Arithmetic LLMs show varying robustness to numeric, linguistic, and tone perturbations. Breakpoint analysis reveals specific pressure points where accuracy drops.
+- **LoRA Extension:** Higher LoRA rank improved clean accuracy and reduced adversarial flip rates across all numeric perturbation strengths.
+
+| Model   | Clean Accuracy |
+|---------|---------------|
+| LoRA-4  | 40.0%         |
+| LoRA-8  | 47.5%         |
+| LoRA-16 | 49.0%         |
+
+- LoRA is not the whole project—it's a later experiment building on the base adversarial robustness work.
+
+## Reproducibility / Example Commands
+
+**Environment Setup:**
+```bash
+poetry install
+poetry shell
+```
+
+**Run Clean Evaluation:**
+```bash
+poetry run python -m student.final_project.arithmetic_llm.run_clean_evaluation \
+  --model-path student/final_project/models/instruction_lora_20260315_181807_057654/merged_model.pt \
+  --tokenizer-path data/tokenizer \
+  --output-dir results/lora_r16_clean_eval
+```
+
+**Run Adversarial Numeric Analysis:**
+```bash
+poetry run python experiments/numeric_perturbation_analysis.py
+```
+
+**Run LoRA Comparison:**
+```bash
+poetry run python experiments/aggregate_lora_comparison.py
+```
+
+## Contributors
+- Kai Neumark
+- Andrew Ross
+- [Add any additional contributors here]
+       - Use the Remote - SSH extension to develop directly on the GCP instance with the full power of VS Code.
+>>>>>>> 54e29d9 (Finalize STAT 359 Arithmetic LLM project structure)
 
 2. **Instruction Mode**: Uses `problem + " <think>"` as prompt, `solution` as target
    - Prompt: `"Evaluate: 5 + (10 - 3) <think>"`
