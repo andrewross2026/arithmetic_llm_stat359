@@ -66,12 +66,16 @@ arithmetic_llm_stat359
 │           └── run_adversarial_numeric.py
 │
 ├── experiments/
-│   └── aggregate_lora_comparison.py
+│   ├── analyze_adversarial_results.py
+│   ├── generate_baseline_table.py
+│   ├── generate_presentation_artifacts.py
+│   └── ...
 │
 └── results/
     ├── comparison_results.csv
     ├── accuracy_vs_rank.png
-    └── fliprate_vs_rank.png
+    ├── fliprate_vs_rank.png
+    └── ...
 ```
 
 ---
@@ -116,8 +120,6 @@ models/foundational_20260201_012912_173614/best_model.pt
 
 ## Step 1 – Corpus Generation
 
-Generate the foundational arithmetic corpus:
-
 ```bash
 poetry run python -m instructor.final_project.arithmetic_llm.generate_foundational_plaintext \
   --num-samples 100000 \
@@ -126,8 +128,6 @@ poetry run python -m instructor.final_project.arithmetic_llm.generate_foundation
   --invalid-rate 0.05 \
   --output-txt data/foundational_corpus.txt
 ```
-
-Generate instruction training corpus:
 
 ```bash
 poetry run python -m instructor.final_project.arithmetic_llm.generate_instruction_corpus_mixed \
@@ -266,17 +266,11 @@ poetry run python -m student.final_project.arithmetic_llm.run_adversarial_numeri
 python experiments/aggregate_lora_comparison.py
 ```
 
-This generates:
-
-```text
-results/comparison_results.csv
-results/accuracy_vs_rank.png
-results/fliprate_vs_rank.png
-```
-
 ---
 
 ## Key Results
+
+### LoRA Performance
 
 | LoRA Rank | Clean Accuracy |
 |-----------|---------------|
@@ -284,7 +278,57 @@ results/fliprate_vs_rank.png
 | 8 | 47.5% |
 | 16 | 49.0% |
 
-Higher LoRA ranks improved arithmetic performance and reduced adversarial flip rates.
+Higher LoRA ranks improve arithmetic performance.
+
+---
+
+### Baseline Accuracy by Difficulty
+
+| Difficulty | Correct | Total | Accuracy (%) |
+|-----------|--------|-------|-------------|
+| Easy      | 199    | 201   | 99.0%       |
+| Medium    | 53     | 80    | 66.3%       |
+| Hard      | 58     | 219   | 26.5%       |
+
+---
+
+### Adversarial Flip Rate by Perturbation
+
+| Perturbation | Flips | Total | Flip Rate (%) |
+|--------------|------|-------|----------------|
+| off_by_1     | 118  | 310   | 38.1%          |
+| off_by_2     | 117  | 310   | 37.7%          |
+| off_by_5     | 151  | 310   | 48.7%          |
+| off_by_10    | 159  | 310   | 51.3%          |
+| random       | 162  | 310   | 52.3%          |
+
+---
+
+### Key Insights
+
+- Accuracy drops sharply with difficulty (99% → 26%)
+- Even small perturbations flip ~38% of correct answers
+- Larger perturbations exceed 50% failure rates
+- LoRA improves accuracy but does not eliminate adversarial vulnerability
+
+---
+
+### Interpretation
+
+The model demonstrates strong arithmetic capability but weak robustness:
+
+- Correct reasoning can be overridden by small misleading hints  
+- Errors arise from instability in reasoning, not lack of knowledge  
+- Robustness does not scale proportionally with model improvements  
+
+---
+
+### Example Failure
+
+- Input: `7 + 5`  
+- Correct: `12`  
+- Perturbation: “closer to 13”  
+- Output: **13 (incorrect)**  
 
 ---
 
@@ -296,13 +340,13 @@ Experiment outputs are stored in:
 results/
 ```
 
-Training checkpoints and logs are generated in:
+Training checkpoints are stored in:
 
 ```text
 models/
 ```
 
-Model checkpoints are **not included in the repository**.
+Model files are excluded from the repository.
 
 ---
 
