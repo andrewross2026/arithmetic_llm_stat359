@@ -24,6 +24,19 @@ sandbox*
 sql_sandbox/*
 .ruff_cache/
 
+# Temporary files
+*.tmp
+*.out
+*.bak
+
+# Large experiment artifacts
+checkpoints/
+models/
+
+# Logs
+logs/
+*.log
+
 **/tuned_embedder/
 **/*.zip
 
