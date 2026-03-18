@@ -15,7 +15,7 @@ We study two main types of adversarial stress:
    Small numeric hints that attempt to push the model toward incorrect answers.
 
 2. **Prompt pressure**  
-   Changes in tone or authority designed to influence the model’s reasoning.
+   Changes in tone or authority designed to influence the model's reasoning.
 
 We also explore whether **increasing LoRA adapter rank** improves both arithmetic performance and resistance to adversarial perturbations.
 
@@ -54,28 +54,68 @@ arithmetic_llm_stat359
 ├── student/
 │   └── final_project/
 │       └── arithmetic_llm/
-│           ├── transformer_model.py
+│           ├── __init__.py
 │           ├── arithmetic_tokenizer.py
 │           ├── arithmetic_verifier.py
+│           ├── check_sequence_lengths.py
+│           ├── corpus_generator.py
 │           ├── data_loader.py
+│           ├── diagnose_speed.py
+│           ├── evaluator.py
+│           ├── generate_corpus.py
+│           ├── generate_foundational_plaintext.py
+│           ├── generate_instruction_corpus_mixed.py
+│           ├── generator.py
+│           ├── grpo_config.py
+│           ├── grpo_trainer.py
+│           ├── interactive_solver.py
+│           ├── lora_config.py
+│           ├── lora_layer.py
+│           ├── lora_utils.py
+│           ├── merge_lora_adapter.py
+│           ├── print_token_table.py
+│           ├── profile_training.py
+│           ├── run_evaluation.py
+│           ├── run_evaluator_tests.py
 │           ├── run_foundational_training.py
+│           ├── run_grpo_training.py
 │           ├── run_instruction_training.py
 │           ├── run_instruction_training_lora.py
-│           ├── run_grpo_training.py
-│           ├── run_evaluation.py
-│           └── run_adversarial_numeric.py
+│           ├── run_interactive.py
+│           ├── show_operator_hardcoding.py
+│           ├── show_token_table.py
+│           ├── test_eos_truncation.py
+│           ├── train_foundational.py
+│           ├── train_grpo.py
+│           ├── train_instruction.py
+│           ├── train_instruction_lora.py
+│           ├── train_tokenizer.py
+│           ├── training_config.py
+│           └── transformer_model.py
 │
 ├── experiments/
+│   ├── README.md
 │   ├── analyze_adversarial_results.py
+│   ├── generate_additional_presentation_plots.py
 │   ├── generate_baseline_table.py
+│   ├── generate_cross_axis_wrong_revision_heatmaps.py
 │   ├── generate_presentation_artifacts.py
-│   └── ...
+│   ├── split_baseline_adv_def_grouped_plot.py
+│   ├── split_cross_axis_grouped_plots.py
+│   ├── split_cross_axis_grouped_plots_strict.py
+│   └── split_cross_axis_wrong_revision_faceted_strict.py
 │
 └── results/
-    ├── comparison_results.csv
     ├── accuracy_vs_rank.png
+    ├── cross_axis_accuracy_language.png
+    ├── cross_axis_accuracy_numeric.png
+    ├── cross_axis_accuracy_politeness.png
+    ├── flip_rate_by_difficulty_and_offset_20260306_190407.png
     ├── fliprate_vs_rank.png
-    └── ...
+    ├── plot1_baseline_accuracy_by_difficulty.png
+    ├── plot2_flip_rate_vs_numeric_perturbation.png
+    ├── plot4_parse_success_by_difficulty.png
+    └── training_val_loss_overlay.png
 ```
 
 ---
@@ -248,14 +288,31 @@ poetry run python -m student.final_project.arithmetic_llm.run_evaluation \
 
 ---
 
-## Step 10 – Adversarial Numeric Evaluation
+## Step 10 – GRPO Training
 
 ```bash
-poetry run python -m student.final_project.arithmetic_llm.run_adversarial_numeric \
-  --baseline-csv results/baseline_table.csv \
-  --model-path models/instruction_lora_YYYYMMDD_HHMMSS/merged_model.pt \
+poetry run python -m student.final_project.arithmetic_llm.run_grpo_training \
+  --instruction-corpus-path data/instruction_corpus.txt \
+  --output-dir models/ \
   --tokenizer-path data/tokenizer \
-  --output-dir results/lora_numeric_eval
+  --foundational-checkpoint models/foundational_YYYYMMDD_HHMMSS/best_model.pt \
+  --num-epochs 3
+```
+
+---
+
+## Step 11 – Adversarial Numeric Evaluation
+
+```bash
+python experiments/generate_baseline_table.py
+```
+
+```bash
+python experiments/analyze_adversarial_results.py
+```
+
+```bash
+python experiments/generate_presentation_artifacts.py
 ```
 
 ---
@@ -263,7 +320,12 @@ poetry run python -m student.final_project.arithmetic_llm.run_adversarial_numeri
 ## Aggregating Final Results
 
 ```bash
-python experiments/aggregate_lora_comparison.py
+python experiments/generate_additional_presentation_plots.py
+python experiments/split_baseline_adv_def_grouped_plot.py
+python experiments/split_cross_axis_grouped_plots.py
+python experiments/split_cross_axis_grouped_plots_strict.py
+python experiments/split_cross_axis_wrong_revision_faceted_strict.py
+python experiments/generate_cross_axis_wrong_revision_heatmaps.py
 ```
 
 ---
@@ -274,9 +336,9 @@ python experiments/aggregate_lora_comparison.py
 
 | LoRA Rank | Clean Accuracy |
 |-----------|---------------|
-| 4 | 40.0% |
-| 8 | 47.5% |
-| 16 | 49.0% |
+| 4         | 40.0%         |
+| 8         | 47.5%         |
+| 16        | 49.0%         |
 
 Higher LoRA ranks improve arithmetic performance.
 
@@ -285,22 +347,22 @@ Higher LoRA ranks improve arithmetic performance.
 ### Baseline Accuracy by Difficulty
 
 | Difficulty | Correct | Total | Accuracy (%) |
-|-----------|--------|-------|-------------|
-| Easy      | 199    | 201   | 99.0%       |
-| Medium    | 53     | 80    | 66.3%       |
-| Hard      | 58     | 219   | 26.5%       |
+|------------|---------|-------|--------------|
+| Easy       | 199     | 201   | 99.0%        |
+| Medium     | 53      | 80    | 66.3%        |
+| Hard       | 58      | 219   | 26.5%        |
 
 ---
 
 ### Adversarial Flip Rate by Perturbation
 
 | Perturbation | Flips | Total | Flip Rate (%) |
-|--------------|------|-------|----------------|
-| off_by_1     | 118  | 310   | 38.1%          |
-| off_by_2     | 117  | 310   | 37.7%          |
-| off_by_5     | 151  | 310   | 48.7%          |
-| off_by_10    | 159  | 310   | 51.3%          |
-| random       | 162  | 310   | 52.3%          |
+|--------------|-------|-------|----------------|
+| off_by_1     | 118   | 310   | 38.1%          |
+| off_by_2     | 117   | 310   | 37.7%          |
+| off_by_5     | 151   | 310   | 48.7%          |
+| off_by_10    | 159   | 310   | 51.3%          |
+| random       | 162   | 310   | 52.3%          |
 
 ---
 
@@ -327,7 +389,7 @@ The model demonstrates strong arithmetic capability but weak robustness:
 
 - Input: `7 + 5`  
 - Correct: `12`  
-- Perturbation: “closer to 13”  
+- Perturbation: "closer to 13"  
 - Output: **13 (incorrect)**  
 
 ---
@@ -370,7 +432,7 @@ MIT License
 - Arithmetic LLM training pipeline  
 - foundational model architecture  
 - tokenizer and dataset generation  
-- model training infrastructure
+- model training infrastructure  
 
 ---
 
