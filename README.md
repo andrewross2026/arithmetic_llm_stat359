@@ -370,4 +370,32 @@ MIT License
 - Arithmetic LLM training pipeline  
 - foundational model architecture  
 - tokenizer and dataset generation  
-- model training infrastructure  
+- model training infrastructure
+
+---
+
+## Credits
+
+This project was built on top of the STAT 359 course repository and draws on prior work in parameter-efficient fine-tuning and mathematical reasoning robustness.
+
+### Base Repository
+
+- Lizhen0909, *STAT 359 Course Repository*:  
+  <https://github.com/Lizhen0909/stat359>
+
+### References
+
+1. Hu, E. J., Shen, Y., Wallis, P., et al. (2022).  
+   *LoRA: Low-rank adaptation of large language models.*  
+   Proceedings of ICLR 2022.  
+   <https://arxiv.org/abs/2106.09685>
+
+2. Li, Q., Cui, L., Zhao, X., Kong, L., & Bi, W. (2024).  
+   *GSM-Plus: A comprehensive benchmark for evaluating the robustness of LLMs as mathematical problem solvers.*  
+   Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (ACL 2024), pp. 2961–2984.  
+   <https://arxiv.org/abs/2402.19255>
+
+3. Mirzadeh, I., Alizadeh, K., Shahrokhi, H., et al. (2025).  
+   *GSM-Symbolic: Understanding the limitations of mathematical reasoning in large language models.*  
+   Proceedings of ICLR 2025.  
+   <https://arxiv.org/abs/2410.05229>
