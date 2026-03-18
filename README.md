@@ -121,7 +121,7 @@ models/foundational_20260201_012912_173614/best_model.pt
 ## Step 1 – Corpus Generation
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.generate_foundational_plaintext \
+poetry run python -m student.final_project.arithmetic_llm.generate_foundational_plaintext \
   --num-samples 100000 \
   --max-depth 4 \
   --num-range 1 20 \
@@ -130,7 +130,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.generate_foundation
 ```
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.generate_instruction_corpus_mixed \
+poetry run python -m student.final_project.arithmetic_llm.generate_instruction_corpus_mixed \
   --num-samples 20000 \
   --max-depth 4 \
   --num-range 1 20 \
@@ -143,7 +143,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.generate_instructio
 ## Step 2 – Train the Tokenizer
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.train_tokenizer \
+poetry run python -m student.final_project.arithmetic_llm.train_tokenizer \
   --corpus-path data/foundational_corpus.txt \
   --output-dir data/tokenizer \
   --vocab-size 1000
@@ -154,7 +154,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.train_tokenizer \
 ## Step 3 – Sequence Length Analysis
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.check_sequence_lengths \
+poetry run python -m student.final_project.arithmetic_llm.check_sequence_lengths \
   --corpus-path data/instruction_corpus.txt \
   --tokenizer-path data/tokenizer \
   --corpus-type instruction
@@ -165,7 +165,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.check_sequence_leng
 ## Step 4 – Foundational Model Training
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_foundational_training \
+poetry run python -m student.final_project.arithmetic_llm.run_foundational_training \
   --corpus-path data/foundational_corpus.txt \
   --output-dir models/ \
   --tokenizer-path data/tokenizer \
@@ -180,7 +180,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.run_foundational_tr
 ## Step 5 – Foundational Model Evaluation
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_evaluation \
+poetry run python -m student.final_project.arithmetic_llm.run_evaluation \
   --model-path models/foundational_YYYYMMDD_HHMMSS/best_model.pt \
   --tokenizer-path data/tokenizer \
   --max-gen-length 512 \
@@ -193,7 +193,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.run_evaluation \
 ## Step 6 – Instruction Fine-Tuning
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_instruction_training \
+poetry run python -m student.final_project.arithmetic_llm.run_instruction_training \
   --instruction-corpus-path data/instruction_corpus.txt \
   --output-dir models/ \
   --tokenizer-path data/tokenizer \
@@ -208,7 +208,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.run_instruction_tra
 ## Step 7 – Instruction Model Evaluation
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_evaluation \
+poetry run python -m student.final_project.arithmetic_llm.run_evaluation \
   --model-path models/instruction_YYYYMMDD_HHMMSS/best_model.pt \
   --tokenizer-path data/tokenizer \
   --max-gen-length 512 \
@@ -221,7 +221,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.run_evaluation \
 ## Step 8 – LoRA Fine-Tuning
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_instruction_training_lora \
+poetry run python -m student.final_project.arithmetic_llm.run_instruction_training_lora \
   --instruction-corpus-path data/instruction_corpus.txt \
   --output-dir models/ \
   --tokenizer-path data/tokenizer \
@@ -238,7 +238,7 @@ poetry run python -m instructor.final_project.arithmetic_llm.run_instruction_tra
 ## Step 9 – LoRA Model Evaluation
 
 ```bash
-poetry run python -m instructor.final_project.arithmetic_llm.run_evaluation \
+poetry run python -m student.final_project.arithmetic_llm.run_evaluation \
   --model-path models/instruction_lora_YYYYMMDD_HHMMSS/merged_model.pt \
   --tokenizer-path data/tokenizer \
   --max-gen-length 512 \
